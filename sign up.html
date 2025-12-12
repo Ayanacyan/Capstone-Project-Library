@@ -1,79 +1,113 @@
 <html>
-    <head>
-        <title>Sign up Page</title>
-        <link rel="stylesheet" href="Capstone.css">
-    </head>
-    <body id="sign-up">
-        <h1>Hello and Welcome to your world of Books</h1>
-         <script src="Capstone.js"></script>
-        <h3>Login to create an account with us to check out books that you find here from the library</h3>
-        <form id="sign-up">
-            <label>Name</label><br>
-            <input type="text" id="name"><br><br>
-            <label>Username</label><br>
-            <input type="text" id="name"><br><br>
-            <label>Email ID</label><br>
-            <input type="text" id="email"><br><br>
-            <label>Age</label><br>
-            <input type="number" id="age"><br><br>
-            <label>Gender</label><br>
-            <input type="radio" id="female" value="female">Female<br>
-            <input type="radio" id="male" value="male">Male<br>
-            <input type="radio" id="other" value="other">Other<br><br>
-            <label>Phone Number (This will be hidden)</label><br>
-            <input type="password" id="phone-number"><br><br>
-            <label>Create a password</label><br>
-            <input type="password" id="password"><br><br>
-            <label>Confirm password</label><br>
-            <input type="password" id="confirmPassword"><br><br>
-            <button type="submit" id="submit">Submit</button>
-        </form>
-        <h4>Or click here to Login</h4>
-        <button type="button"><a href="login.html"><span>Login</span></a></button>
-<script>
-    document.getElementById("sign-up").addEventListener("submit" , function(event){
-event.preventDefault();
-    let name=document.getElementById("name").value.trim();
-    let email = document.getElementById("email").value.trim();
-    let password = document.getElementById("password").value;
-    let confirmPassword= document.getElementById("confirmPassword").value;
-    let gender = document.getElementById("gender").value;
-    let phonenumber = document.getElementById("phone-number").value;
-    let age = document.getElementById("age").value;
- let errorMsg = document.getElementById("errorMsg");
+<head>
+  <title>Sign up Page</title>
+  <link rel="stylesheet" href="Capstone.css">
+</head>
+<body id="signUp">
+  <!-- Error/Success messages -->
+  <p id="message"></p>
 
-    if (name === "" || email === "" || password === "" || confirmPassword === ""|| age ==="") {
-      errorMsg.textContent = "All fields are required!";
-      return;
-    }
+  <form id="signupForm">
+    <div id="signup-container">
+      <h2>Sign-Up</h2>
+    <label>Name</label><br>
+    <input type="text" id="name"><br><br>
 
-    if (password.length < 6) {
-      errorMsg.textContent = "Password must be at least 6 characters long!";
-      return;
-    }
+    <label>Username</label><br>
+    <input type="text" id="username"><br><br>
 
-    if (password !== confirmPassword) {
-      errorMsg.textContent = "Passwords do not match!";
-      return;
-    }
+    <label>Email ID</label><br>
+    <input type="text" id="email"><br><br>
 
-    let users = JSON.parse(localStorage.getItem("users")) || [];
+    <label>Age</label><br>
+    <input type="number" id="age"><br><br>
 
-    // Check if email already exists
-    if (users.some(user => user.email === email)) {
-      errorMsg.textContent = "Email already registered!";
-      return;
-    }
+    <label>Gender</label><br>
+    <input type="radio" value="female" name="gender">Female<br>
+    <input type="radio" value="male" name="gender">Male<br>
+    <input type="radio" value="other" name="gender">Other<br><br>
 
-    // Save new user
-    users.push({ name, email, phonenumber, gender, age, password, });
-    localStorage.setItem("users", JSON.stringify(users));
+    <label>Phone Number (This will be hidden)</label><br>
+    <input type="tel" id="phone-number"><br><br>
 
-    alert("Account created successfully!");
-    document.getElementById("signupForm").reset();
-    errorMsg.textContent = "";
-  });
+    <label>Create a password</label><br>
+    <input type="password" id="password"><br><br>
 
-</script>
-    </body>
-    </html>
+    <label>Confirm password</label><br>
+    <input type="password" id="confirmPassword"><br><br>
+
+    <button type="submit" id="submit">Submit</button>
+    </div>
+  </form>
+
+  <h4>Or click here to Login</h4>
+ <a href="login.html" class="btn">Login</a>
+
+  <script>
+    document.getElementById("signupForm").addEventListener("submit", function(event) {
+      event.preventDefault();
+
+      let name = document.getElementById("name").value.trim();
+      let username = document.getElementById("username").value.trim();
+      let email = document.getElementById("email").value.trim();
+      let password = document.getElementById("password").value;
+      let confirmPassword = document.getElementById("confirmPassword").value;
+      let gender = document.querySelector('input[name="gender"]:checked');
+      let phonenumber = document.getElementById("phone-number").value.trim();
+      let age = document.getElementById("age").value.trim();
+      let message = document.getElementById("message");
+
+      // Required fields check
+      if (!name || !username || !email || !password || !confirmPassword || !age || !gender) {
+        message.style.color = "red";
+        message.textContent = "All fields are required!";
+        return;
+      }
+
+      // Email format check
+      let emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailPattern.test(email)) {
+        message.style.color = "red";
+        message.textContent = "Please enter a valid email address!";
+        return;
+      }
+
+      // Password checks
+      if (password.length < 6) {
+        message.style.color = "red";
+        message.textContent = "Password must be at least 6 characters long!";
+        return;
+      }
+      if (password !== confirmPassword) {
+        message.style.color = "red";
+        message.textContent = "Passwords do not match!";
+        return;
+      }
+
+      // LocalStorage handling
+      let users = JSON.parse(localStorage.getItem("users")) || [];
+      if (users.some(user => user.email === email)) {
+        message.style.color = "red";
+        message.textContent = "Email already registered!";
+        return;
+      }
+
+      // Save new user
+      users.push({ name, username, email, phonenumber, gender: gender.value, age, password });
+      localStorage.setItem("users", JSON.stringify(users));
+
+      // Success message
+      message.style.color = "green";
+      message.textContent = "Account created successfully! Redirecting to login...";
+
+      // Reset form
+      document.getElementById("signupForm").reset();
+
+      // Optional redirect after 2 seconds
+      setTimeout(() => {
+        window.location.href = "login.html";
+      }, 2000);
+    });
+  </script>
+</body>
+</html>
